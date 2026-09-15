@@ -7,4 +7,5 @@ dependencies {
     implementation(libs.federation.jvm)
 
     testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.spring.boot.starter.graphql.test)
 }
