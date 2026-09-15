@@ -18,8 +18,11 @@ def v(field):
 
 
 seed = json.loads(SRC.read_text())
-by_id = {e["sys"]["id"]: e for e in seed["entries"]}
-of_type = lambda t: [e for e in seed["entries"] if e["sys"]["contentType"]["sys"]["id"] == t]
+
+
+def of_type(t):
+    return [e for e in seed["entries"] if e["sys"]["contentType"]["sys"]["id"] == t]
+
 
 categories = [{"key": v(e["fields"]["key"]), "name": v(e["fields"]["name"])} for e in of_type("category")]
 category_key = {e["sys"]["id"]: v(e["fields"]["key"]) for e in of_type("category")}

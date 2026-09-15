@@ -1,13 +1,7 @@
 {
   "name": "gateway",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
+  "description": "Local Hive Gateway and Hive CLI for composing the catalog and personalization subgraphs.",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {

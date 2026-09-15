@@ -4,8 +4,8 @@
 # linter instead of learning Kotlin.
 
 style:
-  # The sealed AST and its exhaustive `when` blocks are the point of the
-  # project. Detekt's defaults would flag them as too long or too complex.
+  # This project's Kotlin is written against GraphQL SDL: wiring builders,
+  # `@key` registrations and resolver signatures read worse wrapped than at 120.
   MaxLineLength:
     maxLineLength: 120
 

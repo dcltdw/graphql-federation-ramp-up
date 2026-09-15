@@ -26,6 +26,10 @@ fail() { printf '\n\033[1;31mERROR: %s\033[0m\n' "$1" >&2; exit 1; }
 
 step "Checking prerequisites"
 docker info >/dev/null 2>&1 || fail "Docker is not running — start Docker Desktop"
+command -v npm >/dev/null 2>&1 || fail "npm is not installed — install Node 20 or newer (the gateway's devDependencies need it)"
+# Without python3 the SDL step below fails as "the response carried no
+# _service.sdl", which points at federation when the problem is the PATH.
+command -v python3 >/dev/null 2>&1 || fail "python3 is not installed — install Python 3 (the SDL and smoke steps parse JSON with it)"
 # A leftover listener (a bootRun open for GraphiQL, an orphaned JVM from an
 # earlier dev.sh) would make the new JVM fail to bind while wait_for happily
 # talks to the OLD process, so the whole loop would run stale code.
