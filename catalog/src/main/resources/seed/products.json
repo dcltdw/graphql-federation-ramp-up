@@ -1,0 +1,155 @@
+[
+  {
+    "id": "CAT-FD-SALM",
+    "name": "Salmon Pate 24-pack",
+    "priceMinor": 3499,
+    "currency": "USD",
+    "category": "cats",
+    "tags": [],
+    "regions": [
+      "US",
+      "EU",
+      "UK",
+      "APAC"
+    ]
+  },
+  {
+    "id": "CAT-LTR-AUTO",
+    "name": "Self-Cleaning Litter Box",
+    "priceMinor": 49900,
+    "currency": "USD",
+    "category": "cats",
+    "tags": [
+      "vip",
+      "premium"
+    ],
+    "regions": [
+      "US"
+    ]
+  },
+  {
+    "id": "CAT-TREE-DLX",
+    "name": "Deluxe Cat Tree",
+    "priceMinor": 18900,
+    "currency": "USD",
+    "category": "cats",
+    "tags": [
+      "vip"
+    ],
+    "regions": [
+      "US",
+      "UK",
+      "EU"
+    ]
+  },
+  {
+    "id": "DOG-BED-ORTH",
+    "name": "Orthopaedic Dog Bed",
+    "priceMinor": 12900,
+    "currency": "USD",
+    "category": "dogs",
+    "tags": [
+      "vip"
+    ],
+    "regions": [
+      "US",
+      "APAC"
+    ]
+  },
+  {
+    "id": "DOG-FD-ECON",
+    "name": "Cheapo Dog Food",
+    "priceMinor": 599,
+    "currency": "USD",
+    "category": "dogs",
+    "tags": [],
+    "regions": [
+      "US"
+    ]
+  },
+  {
+    "id": "DOG-FD-PREM",
+    "name": "Primo Dog Food",
+    "priceMinor": 1599,
+    "currency": "USD",
+    "category": "dogs",
+    "tags": [],
+    "regions": [
+      "US"
+    ]
+  },
+  {
+    "id": "EXO-BIRD-LG",
+    "name": "Large Flight Cage",
+    "priceMinor": 27500,
+    "currency": "GBP",
+    "category": "exotics",
+    "tags": [
+      "vip"
+    ],
+    "regions": [
+      "UK",
+      "EU"
+    ]
+  },
+  {
+    "id": "EXO-HEAT-150",
+    "name": "Ceramic Heat Emitter 150W",
+    "priceMinor": 4299,
+    "currency": "USD",
+    "category": "exotics",
+    "tags": [],
+    "regions": [
+      "US",
+      "EU",
+      "UK"
+    ]
+  },
+  {
+    "id": "EXO-TERR-90",
+    "name": "90cm Glass Terrarium",
+    "priceMinor": 34900,
+    "currency": "USD",
+    "category": "exotics",
+    "tags": [
+      "fragile"
+    ],
+    "regions": [
+      "US",
+      "UK"
+    ]
+  },
+  {
+    "id": "RAB-ALF-2KG",
+    "name": "Alfalfa Pellets",
+    "priceMinor": 2599,
+    "currency": "USD",
+    "category": "rabbits",
+    "tags": [],
+    "regions": [
+      "US"
+    ]
+  },
+  {
+    "id": "RAB-HUTCH-2T",
+    "name": "Two-Tier Rabbit Hutch",
+    "priceMinor": 22900,
+    "currency": "EUR",
+    "category": "rabbits",
+    "tags": [],
+    "regions": [
+      "EU"
+    ]
+  },
+  {
+    "id": "RAB-TIM-2KG",
+    "name": "Timothy Pellets",
+    "priceMinor": 3099,
+    "currency": "USD",
+    "category": "rabbits",
+    "tags": [],
+    "regions": [
+      "US"
+    ]
+  }
+]
