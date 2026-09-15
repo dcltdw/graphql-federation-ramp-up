@@ -13,5 +13,6 @@
   "devDependencies": {
     "@graphql-hive/cli": "^0.63.2",
     "@graphql-hive/gateway": "^2.14.2"
-  }
+  },
+  "private": true
 }
