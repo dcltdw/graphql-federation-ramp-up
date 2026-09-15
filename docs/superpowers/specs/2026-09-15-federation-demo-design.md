@@ -1,6 +1,8 @@
 # Federation demo — design
 
-**Status:** approved in conversation on 2026-09-15; awaiting written review.
+**Status:** approved 2026-09-15. Implementation plan at
+`docs/superpowers/plans/2026-09-15-federation-demo.md`; tickets #2–#14 on
+board #11.
 **Scope:** one implementation plan. Stretch goals are ordered and separable.
 
 ## Purpose
@@ -94,6 +96,13 @@ C before B because C teaches something new about federation and B does not.
 - A third subgraph. Two is the minimum that *is* federation.
 - Retries, circuit breakers, custom error types, header-based context
   propagation. All real; all week-three.
+- **Outbound-integration reliability** — the existing BFF's fire-and-forget
+  calls to third parties, where roughly one request a week fails silently.
+  Raised during review and considered as a separate project; superseded by
+  the strategy of *replacing* the BFF rather than repairing it. Not in scope
+  here. But the partial-results failure mode in §5 is the same *class* of
+  problem — a failure that succeeds at the HTTP level and hides in `errors[]`
+  — and the FE explainer must say so.
 
 ---
 
@@ -368,30 +377,31 @@ concept it teaches** (so expected confusion is distinguishable from a real
 problem), and **what may be assumed to exist**. Agent tickets land first so
 every learner ticket starts from a running system.
 
+Numbers are GitHub issue numbers on board #11. (#1 was the repo seed.)
+
 | # | Ticket | Who | Teaches |
 |:--|:--|:--|:--|
 | **Phase 0 — scaffold** | | | |
-| 1 | Repo skeleton, catalog, gates, placeholder SDLs, walking skeleton | agent | — |
-| 2 | `FederationSchemaFactory` bean + explainer *(study, don't skim)* | agent | what turns a server into a subgraph |
-| 3 | `SeedData.kt` from `contentful/seed.json` | agent | — |
-| 4 | Gateway: compose, `hive dev`, `dev.sh`, `smoke.sh` | agent | — |
-| 5 | Test scaffolding + one example per module | agent | — |
+| #2 | Repo skeleton, catalog, gates, placeholder SDLs, walking skeleton | agent | — |
+| #3 | `FederationSchemaFactory` bean + explainer *(study, don't skim)* | agent | what turns a server into a subgraph |
+| #4 | Seed fixtures from `contentful/seed.json` — as JSON resources, so the learner writes the types | agent | — |
+| #5 | Gateway: compose, `hive dev`, `dev.sh`, `smoke.sh` | agent | — |
+| #6 | Test scaffolding + one example per module | agent | — |
 | **Phase 1 — catalog** | | | |
-| 6 | Catalog schema | learner | FE contract; `@key`; nullability |
-| 7 | Catalog resolvers + tests | learner | `@QueryMapping`; data classes |
+| #7 | Catalog schema | learner | FE contract; `@key`; nullability |
+| #8 | Catalog resolvers + tests | learner | `@QueryMapping`; data classes |
 | **Phase 2 — personalization** | | | |
-| 8 | Personalization schema | learner | extending an entity |
-| 9 | Reference resolver, `cta`, lookup, tests | learner | **`@EntityMapping`** |
+| #9 | Personalization schema | learner | extending an entity |
+| #10 | Reference resolver, `cta`, lookup, tests | learner | **`@EntityMapping`** |
 | **Phase 3 — integrate** | | | |
-| 10 | Loop green; `_entities` in logs; degradation demo | learner | partial results |
-| 11 | FE explainer | both | the demo |
+| #11 | Loop green; `_entities` in logs; degradation demo | learner | partial results |
+| #12 | FE explainer | both | the demo |
 | **Stretch** | | | |
-| 12 | Hive registry: publish, break, watch the check fail | agent scaffolds, learner drives | the pipeline |
-| 13 | Live Contentful behind catalog | agent scaffolds, learner wires | data source behind a subgraph |
+| #13 | Hive registry: publish, break, watch the check fail | agent scaffolds, learner drives | the pipeline |
+| #14 | Live Contentful behind catalog | agent scaffolds, learner wires | data source behind a subgraph |
 
-Ticket 9 is the point of the project. Ticket 1 must also create the issues for
-2–13 on the board before any other branch exists, per the repo's rules — with
-12 and 13 labeled `deferred`, so the stretch goals are visible without
+#10 is the point of the project. All fourteen issues exist on board #11; #13
+and #14 carry the `deferred` label, so the stretch goals are visible without
 pretending they are scheduled.
 
 ## Open questions, carried
