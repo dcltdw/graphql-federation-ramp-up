@@ -1,0 +1,37 @@
+{
+  "segments": [
+    "firstTimeBuyer",
+    "newsletter",
+    "vip"
+  ],
+  "ctas": [
+    {
+      "ctaId": "free-shipping",
+      "name": "Free Shipping Banner",
+      "variants": [
+        {
+          "variantKey": "control",
+          "headline": "Free shipping on orders over $50"
+        },
+        {
+          "variantKey": "urgency",
+          "headline": "Free shipping ends Sunday"
+        }
+      ]
+    },
+    {
+      "ctaId": "vip-early-access",
+      "name": "VIP Early Access",
+      "variants": [
+        {
+          "variantKey": "control",
+          "headline": "Early access for VIP members"
+        },
+        {
+          "variantKey": "personalized",
+          "headline": "Your early access is open"
+        }
+      ]
+    }
+  ]
+}
