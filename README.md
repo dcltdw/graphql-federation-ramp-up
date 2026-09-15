@@ -23,4 +23,13 @@ Hive Gateway · Hive CLI for local composition.
 watch a breaking-change check fail; then back the catalog with live Contentful
 data from the `kotlin-ramp-up` space.
 
+## Run it
+
+```sh
+./dev.sh        # build, start both subgraphs, compose, start the gateway
+./smoke.sh      # in another terminal: prove the federated join
+```
+
+GraphiQL: `http://localhost:8081/graphiql`, `:8082/graphiql`. Gateway: `http://localhost:4000/graphql`.
+
 Design: [docs/superpowers/specs/2026-09-15-federation-demo-design.md](docs/superpowers/specs/2026-09-15-federation-demo-design.md).
