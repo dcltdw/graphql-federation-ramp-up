@@ -14,17 +14,22 @@ differently, both are shown.
 
 A subgraph is an ordinary GraphQL server. It has a schema, resolvers, and a
 `/graphql` endpoint, and you can query it directly with curl or GraphiQL. There
-is nothing special about it except **two extra root fields on `Query`** that
-the gateway relies on and a normal client never uses:
+is nothing special about it except **two extra root fields on `Query`** that a
+normal client never uses. They are used at two different times, by two
+different things:
 
-- `_service` lets the gateway ask "what is your schema?"
-- `_entities` lets the gateway say "here are some keys; give me the fields you
-  own for them."
+- **At composition time, `_service` answers "what is your schema?"** In this
+  project `dev.sh` (#5) fetches `_service { sdl }` from each subgraph and saves
+  it to a file. `hive dev` composes those files into `supergraph.graphql`, and
+  Hive Gateway loads that file. The gateway itself never calls `_service`.
+- **At runtime, `_entities` lets the gateway say "here are some keys; give me
+  the fields you own for them."** This is the one federation field the gateway
+  calls on a live request, alongside the ordinary root fields such as
+  `products`.
 
 Neither field appears in your `.graphqls` file. They get added when the schema
-is built. Catalog and personalization never call each other. The gateway talks
-to each one separately, and these two fields are the whole protocol between
-the gateway and a subgraph.
+is built. Catalog and personalization never call each other. At runtime the
+gateway talks to each one separately, using ordinary queries plus `_entities`.
 
 ## 2. `_service { sdl }`: "what is your schema?"
 
@@ -32,8 +37,11 @@ the gateway and a subgraph.
 federation directives still in it** (`@link`, `@key`, and so on). Standard
 introspection (`__schema`) cannot do this job, because introspection does not
 carry directive usages. Composition needs them: it has to know that `Product`
-is an entity keyed by `id`. So `hive dev` (#5) and the Hive registry read
-`_service { sdl }`, not introspection.
+is an entity keyed by `id`. So the SDL that composition works from comes from
+`_service { sdl }`, not from introspection. Neither `hive dev` nor the registry
+fetches it. In #5, `dev.sh` curls `_service { sdl }` and passes the saved file
+to `hive dev --schema`. In the registry stretch goal, the same SDL gets
+*published* to the registry.
 
 Here is the real response from catalog right now, still on the placeholder
 schema:
@@ -69,7 +77,10 @@ Three things to notice:
   on `schema`, definitions for the federation directives, `_service` and
   `_entities` on `Query`, and the `_Entity` union. That was observed on a
   throwaway schema with one `@key` type, which was deleted afterwards.
-- **The `#` comments at the top of the file came back as a `"""` description.**
+- **The `#` comments came back as a `"""` description on `type Query`.** That
+  happened because they sit directly above `type Query` in the file, so they
+  were attached to that type as its description. A `#` comment block directly
+  above a type in your #7 schema will do the same thing in `_service` output.
   What you get back is a printed schema, not the file.
 - **`_service` is not in this SDL**, even though it is now on the live `Query`.
   On the placeholder, `Query` has exactly two fields when you introspect it:
@@ -123,9 +134,9 @@ Read it slowly:
 - **`_entities` returns `[_Entity]!`.** `_Entity` is a union of every entity
   type in this subgraph, which is why the selection needs `... on Product`.
 - **The answer is a list in the same order as the representations**, one
-  element per representation. An element can be `null`. On a throwaway schema,
-  a key the resolver returned `null` for came back as `null` in that position,
-  and the response had no `errors` entry.
+  element per representation. An element can be `null`. Whether a `null` also
+  comes with an `errors` entry depends on the form of your resolver, which §5
+  explains.
 - **What the gateway puts in `...on Product { }`** comes from the client's
   query: only the fields this subgraph owns. Personalization is never asked for
   `name` or `priceMinor`.
@@ -236,23 +247,40 @@ Here is what each part connects to:
 
 - **`@EntityMapping` on a method named `product`** registers it for the
   `Product` entity. That satisfies the startup check in §4 step 1.
-- **The parameter name `idList` is not arbitrary.** For a list parameter,
-  Spring strips a trailing `List` from the name and reads that key from each
-  representation. So `idList` means "the `id` of every representation", in
+- **The parameter name `idList` is not arbitrary.** Because this is a batch
+  method (it returns a `List`), Spring strips a trailing `List` from the
+  `@Argument` name and reads that key from each representation. So `idList` means "the `id` of every representation", in
   order. On the throwaway schema, three representations arrived as one call
   with `idList=[CAT-TREE-DLX, UNKNOWN, LASER-POINTER]`.
 - **The return type `List<Product?>`** is one element per id, in the same
-  order. It is nullable because a key you cannot resolve is a `null` in that
-  slot, not an exception.
+  order. It is nullable because in this list form, a key you cannot resolve is
+  just a `null` in that slot. On a throwaway schema, the list form returning
+  `null` for one of three ids gave
+  `{"data":{"_entities":[{"id":"CAT-TREE-DLX"},null,{"id":"LASER-POINTER"}]}}`
+  with no `errors` entry.
 
 **Why a *list*.** The gateway does not send one `_entities` request per
 product. It collects every `Product` key it needs from that step of the plan
 and sends them all in one request, as in §3. With the list form, Spring passes
 all those keys to your method in **one call**. You then resolve twelve products
-with one lookup instead of twelve calls to the same method. The single-key
-form, `fun product(@Argument id: String): Product?`, also works, but Spring
-then calls it once per key, even though the keys all arrived together.
-Declaring the list form keeps the batch the gateway already built.
+with one lookup instead of twelve calls to the same method. Declaring the list
+form keeps the batch the gateway already built.
+
+**The single-key form behaves differently.** You could also write
+`fun product(@Argument id: String): Product?`. Spring then calls it once per
+key, even though the keys all arrived together, and it treats a `null` return
+as a failure, not a quiet "not found". That slot is still `null`, but the
+response also gets an error for that position. On the same throwaway schema
+it looked like this:
+
+```json
+{"errors":[{"message":"Entity fetcher returned null or completed empty",
+  "path":["_entities",1],"extensions":{"classification":"INTERNAL_ERROR"}, ...}],
+ "data":{"_entities":[{"id":"CAT-TREE-DLX"},null,{"id":"LASER-POINTER"}]}}
+```
+
+So if you ever see that message, nothing is broken: it is how the single-key
+form reports a missing key.
 
 ## 6. What it does not do
 
@@ -263,8 +291,10 @@ does not:
   The gateway splits the query, decides that personalization needs product ids
   from catalog, and orders the calls.
 - **Compose schemas.** It does not know what the other subgraph's schema looks
-  like, or whether the two conflict. Composition (`hive dev` in #5, the
-  registry later) reads both `_service { sdl }` outputs and does that.
+  like, or whether the two conflict. Composition does that, working from both
+  subgraphs' `_service { sdl }` output: `hive dev` in #5 composes the files
+  `dev.sh` saved, and later the registry composes the SDL that gets published
+  to it.
 - **Talk to the other subgraph.** Nothing in it makes an outbound call.
   Personalization never learns a product's name. It gets keys in `_entities`
   and returns the fields it owns. Merging those back into the client's response
@@ -280,9 +310,10 @@ own with curl.
 Answer these from memory before starting #7:
 
 1. What does the gateway send to `_entities`, and what does it expect back,
-   including order and what a missing key looks like?
-2. Why does the gateway read `_service { sdl }` instead of running an
-   introspection query?
+   including order? What does a missing key look like with the list form, and
+   how is that different with the single-key form?
+2. Why does composition work from `_service { sdl }` rather than an
+   introspection query, and who actually calls `_service` in this project?
 3. Today, catalog has `_service` but no `_entities`. Why, and what change to a
    schema makes `_entities` appear?
 4. If personalization's schema has a `@key` type and no `@EntityMapping` for

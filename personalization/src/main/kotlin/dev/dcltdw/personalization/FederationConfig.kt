@@ -9,8 +9,8 @@ import org.springframework.graphql.data.federation.FederationSchemaFactory
  * Turns this ordinary GraphQL server into a federation subgraph.
  *
  * Two things get added to the schema that the SDL file never mentions:
- *  - `_service { sdl }` — how the gateway (and `hive dev`) learns this
- *    subgraph's schema, with the federation directives intact.
+ *  - `_service { sdl }` — how composition (`hive dev`, later the registry)
+ *    learns this subgraph's schema, with the federation directives intact.
  *  - `_entities(representations:)` — how the gateway hands this subgraph a
  *    list of entity KEYS and asks it to resolve the fields it owns. Served by
  *    `@EntityMapping` methods in controllers.
