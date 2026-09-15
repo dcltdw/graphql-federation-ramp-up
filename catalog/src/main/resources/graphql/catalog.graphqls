@@ -1,0 +1,5 @@
+# PLACEHOLDER. Replaced by the real catalog schema in issue #7.
+# It exists so that composition (issue #5) succeeds before any real schema does.
+type Query {
+  hello: String
+}
