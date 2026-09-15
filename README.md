@@ -32,4 +32,8 @@ data from the `kotlin-ramp-up` space.
 
 GraphiQL: `http://localhost:8081/graphiql`, `:8082/graphiql`. Gateway: `http://localhost:4000/graphql`.
 
+Stop the running loop with Ctrl-C before starting `./dev.sh` again: it refuses to
+start while 8081, 8082 or 4000 is busy, so it can never compose against a
+subgraph still running stale code.
+
 Design: [docs/superpowers/specs/2026-09-15-federation-demo-design.md](docs/superpowers/specs/2026-09-15-federation-demo-design.md).

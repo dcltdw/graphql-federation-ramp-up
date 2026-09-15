@@ -70,13 +70,22 @@ step "Fetching federated SDL"
 mkdir -p gateway/sdl
 # Each failure is named explicitly: `||` suspends set -e inside the
 # assignment, and the here-string replaces a pipe that pipefail would report
-# as a bare Python traceback.
+# as a bare Python traceback. The SDL is held in a variable and printed only
+# once it is known to be a non-empty string: a null one would otherwise reach
+# the file as the literal "None" and surface later as a composition failure,
+# blaming the schemas.
 sdl() {
-  local body
+  local body text
   body=$(curl -sf --max-time 10 "$1" -H 'Content-Type: application/json' -d '{"query":"{ _service { sdl } }"}') \
     || fail "could not fetch SDL from $1"
-  python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["_service"]["sdl"])' <<<"$body" 2>/dev/null \
+  text=$(python3 -c 'import json, sys
+d = json.load(sys.stdin)
+s = (((d or {}).get("data") or {}).get("_service") or {}).get("sdl")
+if not isinstance(s, str) or not s.strip():
+    sys.exit(1)
+print(s)' <<<"$body" 2>/dev/null) \
     || fail "could not fetch SDL from $1 — the response carried no _service.sdl"
+  printf '%s\n' "$text"
 }
 sdl "$CATALOG" > gateway/sdl/catalog.graphql
 sdl "$PERSONALIZATION" > gateway/sdl/personalization.graphql
