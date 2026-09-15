@@ -31,4 +31,19 @@ class CatalogApplicationTest {
         assertThat(response.statusCode()).isEqualTo(200)
         assertThat(response.body()).contains("hello from catalog")
     }
+
+    @Test
+    fun `the federation service endpoint exposes the SDL`() {
+        val request =
+            HttpRequest
+                .newBuilder(URI.create("http://localhost:$port/graphql"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString("""{"query":"{ _service { sdl } }"}"""))
+                .build()
+        val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString())
+
+        assertThat(response.statusCode()).isEqualTo(200)
+        assertThat(response.body()).contains("type Query")
+        assertThat(response.body()).doesNotContain("\"errors\"")
+    }
 }
