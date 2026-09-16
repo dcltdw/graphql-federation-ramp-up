@@ -15,7 +15,6 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-graphql = { module = "org.springframework.boot:spring-boot-starter-graphql" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 spring-boot-starter-graphql-test = { module = "org.springframework.boot:spring-boot-starter-graphql-test" }
-jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 federation-jvm = { module = "com.apollographql.federation:federation-graphql-java-support", version.ref = "federationJvm" }

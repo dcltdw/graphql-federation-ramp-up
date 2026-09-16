@@ -23,4 +23,21 @@ Hive Gateway · Hive CLI for local composition.
 watch a breaking-change check fail; then back the catalog with live Contentful
 data from the `kotlin-ramp-up` space.
 
+## Run it
+
+**You need.** Docker, to run the gateway container. Node 20 or newer, for the
+`npm ci` that installs the Hive CLI and gateway. `python3`, which reads the SDL
+and smoke-test responses. Gradle provisions its own JDK, so Java is not on you.
+
+```sh
+./dev.sh        # build, start both subgraphs, compose, start the gateway
+./smoke.sh      # in another terminal: prove the federated join
+```
+
+GraphiQL: `http://localhost:8081/graphiql`, `:8082/graphiql`. Gateway: `http://localhost:4000/graphql`.
+
+Stop the running loop with Ctrl-C before starting `./dev.sh` again: it refuses to
+start while 8081, 8082 or 4000 is busy, so it will not compose against a
+subgraph still running stale code.
+
 Design: [docs/superpowers/specs/2026-09-15-federation-demo-design.md](docs/superpowers/specs/2026-09-15-federation-demo-design.md).

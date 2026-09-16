@@ -2,33 +2,42 @@ package dev.dcltdw.personalization
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.graphql.test.autoconfigure.tester.AutoConfigureHttpGraphQlTester
 import org.springframework.boot.test.context.SpringBootTest
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
+import org.springframework.graphql.test.tester.HttpGraphQlTester
 
 /**
- * Proves the module boots and serves GraphQL over plain HTTP. Issue #6 replaces
- * this with HttpGraphQlTester; until then this is the walking skeleton's pulse.
+ * Proves the GraphQL test harness is wired: HttpGraphQlTester boots the module
+ * and sends real queries over HTTP.
+ *
+ * DELETE the `hello` test when the placeholder schema goes (issue #9), and at
+ * the latest with the real tests (issue #10). Keep the `_service` one — it
+ * guards the federation wiring from issue #3.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureHttpGraphQlTester
 class PersonalizationApplicationTest {
-    @field:Value("\${local.server.port}")
-    private var port: Int = 0
+    @Autowired
+    private lateinit var graphQl: HttpGraphQlTester
 
     @Test
-    fun `the placeholder query answers over HTTP`() {
-        val request =
-            HttpRequest
-                .newBuilder(URI.create("http://localhost:$port/graphql"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString("""{"query":"{ hello }"}"""))
-                .build()
-        val response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString())
+    fun `the placeholder query answers`() {
+        graphQl
+            .document("{ hello }")
+            .execute()
+            .path("hello")
+            .entity(String::class.java)
+            .isEqualTo("hello from personalization")
+    }
 
-        assertThat(response.statusCode()).isEqualTo(200)
-        assertThat(response.body()).contains("hello from personalization")
+    @Test
+    fun `the federation service endpoint exposes the SDL`() {
+        graphQl
+            .document("{ _service { sdl } }")
+            .execute()
+            .path("_service.sdl")
+            .entity(String::class.java)
+            .satisfies { assertThat(it).contains("type Query") }
     }
 }

@@ -1,0 +1,12 @@
+services:
+  gateway:
+    image: ghcr.io/graphql-hive/gateway:2.14.2
+    command: supergraph /gateway/supergraph.graphql
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./supergraph.graphql:/gateway/supergraph.graphql:ro
+    # The subgraphs run on the host. Inside the container, "localhost" is the
+    # container, so the supergraph's routing URLs use host.docker.internal.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
