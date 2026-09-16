@@ -2,7 +2,7 @@
   "name": "gateway",
   "version": "1.0.0",
   "description": "Local Hive Gateway and Hive CLI for composing the catalog and personalization subgraphs.",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "type": "commonjs",
   "devDependencies": {
     "@graphql-hive/cli": "^0.63.2",
