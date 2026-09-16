@@ -1,0 +1,5 @@
+# PLACEHOLDER. Replaced by the real personalization schema in issue #9.
+# It exists so that composition (issue #5) succeeds before any real schema does.
+type Query {
+  hello: String
+}

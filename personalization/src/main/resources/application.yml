@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: personalization
+  graphql:
+    graphiql:
+      enabled: true      # http://localhost:8082/graphiql — handy while hand-writing schemas
+
+server:
+  port: 8082

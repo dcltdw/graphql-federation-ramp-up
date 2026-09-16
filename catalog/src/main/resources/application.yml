@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: catalog
+  graphql:
+    graphiql:
+      enabled: true      # http://localhost:8081/graphiql — handy while hand-writing schemas
+
+server:
+  port: 8081
